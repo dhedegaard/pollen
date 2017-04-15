@@ -57,3 +57,5 @@ javadoc
 htmlcov
 *.sqlite
 *.sqlite3
+
+debug
