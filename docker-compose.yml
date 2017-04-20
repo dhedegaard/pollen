@@ -3,5 +3,6 @@ version: "2.1"
 services:
   pollen:
     build: .
+    restart: always
     ports:
      - "127.0.0.1:23231:23231"
