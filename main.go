@@ -1,10 +1,10 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"strconv"
 	"sync"
-
-	"fmt"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -39,7 +39,11 @@ func main() {
 		}
 		c.JSON(200, output)
 	})
-	r.Run(":8000")
+	listenAddr, ok := os.LookupEnv("LISTEN_ADDR")
+	if !ok {
+		listenAddr = ":8080"
+	}
+	r.Run(listenAddr)
 }
 
 func fetchParseAndJsonify() ([]forecast, error) {
