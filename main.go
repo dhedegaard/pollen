@@ -6,6 +6,8 @@ import (
 	"strconv"
 	"sync"
 
+	"time"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 )
@@ -25,6 +27,7 @@ type forecastValue struct {
 
 var cacheMutex sync.Mutex
 var cache []forecast
+var cacheTime time.Time
 
 func init() {
 	cacheMutex = sync.Mutex{}
@@ -49,11 +52,10 @@ func main() {
 func fetchParseAndJsonify() ([]forecast, error) {
 	// Check for cache before starting.
 	cacheMutex.Lock()
-	if cache != nil {
-		cacheMutex.Unlock()
+	defer cacheMutex.Unlock()
+	if cache != nil && !cacheTime.Add(10*time.Minute).After(time.Now()) {
 		return cache, nil
 	}
-	cacheMutex.Unlock()
 
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
@@ -116,8 +118,7 @@ func fetchParseAndJsonify() ([]forecast, error) {
 	}
 
 	// Set the cache for the future.
-	cacheMutex.Lock()
 	cache = forecasts
-	cacheMutex.Unlock()
+	cacheTime = time.Now()
 	return forecasts, nil
 }
