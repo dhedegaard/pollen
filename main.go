@@ -1,18 +1,14 @@
 package main
 
 import (
+	"errors"
 	"fmt"
+	"log"
+	"net/http"
 	"os"
 	"strconv"
 	"sync"
-
 	"time"
-
-	"errors"
-
-	"log"
-
-	"net/http"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
