@@ -8,6 +8,12 @@ import (
 
 	"time"
 
+	"errors"
+
+	"log"
+
+	"net/http"
+
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 )
@@ -25,21 +31,29 @@ type forecastValue struct {
 	Value int    `json:"value"`
 }
 
-var cacheMutex sync.Mutex
+var cacheMutex sync.RWMutex
 var cache []forecast
-var cacheUntil time.Time
 
 func init() {
-	cacheMutex = sync.Mutex{}
+	// Print date/time when logging using the default logger.
+	log.SetFlags(log.LstdFlags)
 }
+
 func main() {
+	// Start the goroutine for refreshing the cache periodically.
+	go refreshCacheJob()
+
 	r := gin.Default()
 	r.GET("/", func(c *gin.Context) {
-		output, err := fetchParseAndJsonify()
+		output, err := fetchCache()
+
+		// If we're unable to fetch anything from the cache, tell the client.
 		if err != nil {
-			c.AbortWithError(500, err)
+			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
+
+		// Otherwise, return what was in the cache.
 		c.JSON(200, output)
 	})
 	listenAddr, ok := os.LookupEnv("LISTEN_ADDR")
@@ -49,17 +63,43 @@ func main() {
 	r.Run(listenAddr)
 }
 
-func fetchParseAndJsonify() ([]forecast, error) {
+func fetchCache() ([]forecast, error) {
+	// Grab a read lock.
+	cacheMutex.RLock()
+	defer cacheMutex.RUnlock()
+
+	// Check if the cache is empty, if it rebuild cache and return an error.
+	if cache == nil {
+		go rebuildCache()
+		return nil, errors.New("Cache is empty, try again in a few seconds")
+	}
+
+	return cache, nil
+}
+
+// Handles refreshing the cache every so often.
+func refreshCacheJob() {
+	for range time.Tick(10 * time.Minute) {
+		// Rebuild the cache.
+		err := rebuildCache()
+
+		// Log whatever happened.
+		if err != nil {
+			log.Fatalln("Error rebuilding cache:", err)
+		} else {
+			log.Println("Cache rebuild successful")
+		}
+	}
+}
+
+func rebuildCache() error {
 	// Check for cache before starting.
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
-	if cache != nil && cacheUntil.After(time.Now()) {
-		return cache, nil
-	}
 
 	doc, err := goquery.NewDocument(url)
 	if err != nil {
-		return nil, fmt.Errorf("error fetching from URL: %v", err)
+		return fmt.Errorf("error fetching from URL: %v", err)
 	}
 	forecasts := make([]forecast, 0, 0)
 
@@ -114,11 +154,10 @@ func fetchParseAndJsonify() ([]forecast, error) {
 		})
 	})
 	if outerErr != nil {
-		return nil, outerErr
+		return outerErr
 	}
 
 	// Set the cache for the future.
 	cache = forecasts
-	cacheUntil = time.Now().Add(10 * time.Minute)
-	return forecasts, nil
+	return nil
 }
