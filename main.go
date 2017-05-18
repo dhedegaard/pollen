@@ -27,7 +27,7 @@ type forecastValue struct {
 
 var cacheMutex sync.Mutex
 var cache []forecast
-var cacheTime time.Time
+var cacheUntil time.Time
 
 func init() {
 	cacheMutex = sync.Mutex{}
@@ -53,7 +53,7 @@ func fetchParseAndJsonify() ([]forecast, error) {
 	// Check for cache before starting.
 	cacheMutex.Lock()
 	defer cacheMutex.Unlock()
-	if cache != nil && !cacheTime.Add(10*time.Minute).After(time.Now()) {
+	if cache != nil && cacheUntil.After(time.Now()) {
 		return cache, nil
 	}
 
@@ -119,6 +119,6 @@ func fetchParseAndJsonify() ([]forecast, error) {
 
 	// Set the cache for the future.
 	cache = forecasts
-	cacheTime = time.Now()
+	cacheUntil = time.Now().Add(10 * time.Minute)
 	return forecasts, nil
 }
