@@ -21,7 +21,8 @@
                         <ul class="list-group list-group-flush">
                             {{ range .Values }}
                                 <li class="list-group-item">
-                                    <small>{{ .Name }}:</small> &nbsp;<b>{{ .Value }}</b>
+                                    <small>{{ .Name }}:</small> &nbsp;
+                                    <b{{if eq .Value 0 }} class="text-muted"{{ end }}>{{ .Value }}</b>
                                 </li>
                             {{ end }}
                         </ul>
