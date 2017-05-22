@@ -40,6 +40,7 @@ func main() {
 	go refreshCacheJob()
 
 	r := gin.Default()
+	r.LoadHTMLGlob("templates/*.html")
 	r.GET("/", func(c *gin.Context) {
 		output, err := fetchCache()
 
@@ -49,8 +50,21 @@ func main() {
 			return
 		}
 
+		c.HTML(http.StatusOK, "index.html", gin.H{
+			"output": output,
+		})
+	})
+	r.GET("/api", func(c *gin.Context) {
+		output, err := fetchCache()
+
+		// If we're unable to fetch anything from the cache, tell the client.
+		if err != nil {
+			c.String(http.StatusInternalServerError, err.Error())
+			return
+		}
+
 		// Otherwise, return what was in the cache.
-		c.JSON(200, output)
+		c.JSON(http.StatusOK, output)
 	})
 	listenAddr, ok := os.LookupEnv("LISTEN_ADDR")
 	if !ok {

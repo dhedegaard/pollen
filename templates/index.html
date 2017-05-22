@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+        crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            {{ range .output }}
+                <div class="col">
+                    <div class="card">
+                        <h4 class="card-header">{{ .CityName }}</h4>
+                        <ul class="list-group list-group-flush">
+                            {{ range .Values }}
+                                <li class="list-group-item">
+                                    <small>{{ .Name }}:</small> &nbsp;<b>{{ .Value }}</b>
+                                </li>
+                            {{ end }}
+                        </ul>
+                        <div class="card-block">
+                            <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
+                        </div>
+                    </div>
+                </div>
+            {{ end }}
+        </div>
+        <div class="row text-right">
+            <div class="col">
+                <small class="text-muted">
+                    API available <a href="/api">here</a>, get the source on <a href="https://github.com/dhedegaard/pollen">Github</a>
+                </small>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
