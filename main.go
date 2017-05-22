@@ -75,7 +75,7 @@ func fetchCache() ([]forecast, error) {
 
 // Handles refreshing the cache every so often.
 func refreshCacheJob() {
-	for range time.Tick(10 * time.Minute) {
+	for {
 		// Rebuild the cache.
 		err := rebuildCache()
 
@@ -85,6 +85,8 @@ func refreshCacheJob() {
 		} else {
 			log.Println("Cache rebuild successful")
 		}
+
+		<- time.Tick(10 * time.Minute)
 	}
 }
 
