@@ -22,7 +22,15 @@
                             {{ range .Values }}
                                 <li class="list-group-item">
                                     <small>{{ .Name }}:</small> &nbsp;
-                                    <b{{if eq .Value 0 }} class="text-muted"{{ end }}>{{ .Value }}</b>
+                                    {{ if le .Value 0 }}
+                                        <span class="text-muted">{{ .Value }}</span>
+                                    {{ else if le .Value 20 }}
+                                        <b class="text-muted text-success">{{ .Value }}</b>
+                                    {{ else if le .Value 50 }}
+                                        <b class="text-muted text-warning">{{ .Value }}</b>
+                                    {{ else }}
+                                        <b class="text-muted text-danger">{{ .Value }}</b>
+                                    {{ end }}
                                 </li>
                             {{ end }}
                         </ul>
