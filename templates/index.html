@@ -2,56 +2,56 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
-        crossorigin="anonymous">
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+    crossorigin="anonymous">
 </head>
 
 <body>
-    <div class="container">
-        <div class="row">
-            {{ range .output }}
-                <div class="col">
-                    <div class="card">
-                        <h5 class="card-header">{{ .CityName }}</h5>
-                        <ul class="list-group list-group-flush">
-                            {{ range .Values }}
-                                <li class="list-group-item">
-                                    <small>{{ .Name }}:</small> &nbsp;
-                                    {{ if le .Value 0 }}
-                                        <span class="text-muted">{{ .Value }}</span>
-                                    {{ else if le .Value 20 }}
-                                        <b class="text-muted text-success">{{ .Value }}</b>
-                                    {{ else if le .Value 50 }}
-                                        <b class="text-muted text-warning">{{ .Value }}</b>
-                                    {{ else }}
-                                        <b class="text-muted text-danger">{{ .Value }}</b>
-                                    {{ end }}
-                                </li>
-                            {{ end }}
-                        </ul>
-                        <div class="card-block">
-                            <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
-                        </div>
-                    </div>
-                </div>
-            {{ end }}
-        </div>
-        <div class="row text-right">
-            <div class="col">
-                <small class="text-muted">
-                    {{ if .cacheTimestamp }}
-                        <span class="text-nowrap">Cache timestamp: <b>{{ .cacheTimestamp }} UTC</b>.</span>
-                    {{ end }}
-                    <span class="text-nowrap">API available <a href="/api">here</a>, get the source on <a href="https://github.com/dhedegaard/pollen">Github</a></span>
-                </small>
+  <div class="container">
+    <div class="row">
+      {{ range .output }}
+        <div class="col">
+          <div class="card">
+            <h5 class="card-header">{{ .CityName }}</h5>
+            <ul class="list-group list-group-flush">
+              {{ range .Values }}
+                <li class="list-group-item">
+                  <small>{{ .Name }}:</small> &nbsp;
+                  {{ if le .Value 0 }}
+                    <span class="text-muted">{{ .Value }}</span>
+                  {{ else if le .Value 20 }}
+                    <b class="text-muted text-success">{{ .Value }}</b>
+                  {{ else if le .Value 50 }}
+                    <b class="text-muted text-warning">{{ .Value }}</b>
+                  {{ else }}
+                    <b class="text-muted text-danger">{{ .Value }}</b>
+                  {{ end }}
+                </li>
+              {{ end }}
+            </ul>
+            <div class="card-block">
+              <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
             </div>
+          </div>
         </div>
+      {{ end }}
     </div>
+    <div class="row text-right">
+      <div class="col">
+        <small class="text-muted">
+          {{ if .cacheTimestamp }}
+            <span class="text-nowrap">Cache timestamp: <b>{{ .cacheTimestamp }} UTC</b>.</span>
+          {{ end }}
+          <span class="text-nowrap">API available <a href="/api">here</a>, get the source on <a href="https://github.com/dhedegaard/pollen">Github</a></span>
+        </small>
+      </div>
+    </div>
+  </div>
 </body>
 
 </html>
