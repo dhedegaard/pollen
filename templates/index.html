@@ -17,7 +17,7 @@
             {{ range .output }}
                 <div class="col">
                     <div class="card">
-                        <h4 class="card-header">{{ .CityName }}</h4>
+                        <h5 class="card-header">{{ .CityName }}</h5>
                         <ul class="list-group list-group-flush">
                             {{ range .Values }}
                                 <li class="list-group-item">
@@ -44,7 +44,10 @@
         <div class="row text-right">
             <div class="col">
                 <small class="text-muted">
-                    API available <a href="/api">here</a>, get the source on <a href="https://github.com/dhedegaard/pollen">Github</a>
+                    {{ if .cacheTimestamp }}
+                        <span class="text-nowrap">Cache timestamp: <b>{{ .cacheTimestamp }} UTC</b>.</span>
+                    {{ end }}
+                    <span class="text-nowrap">API available <a href="/api">here</a>, get the source on <a href="https://github.com/dhedegaard/pollen">Github</a></span>
                 </small>
             </div>
         </div>

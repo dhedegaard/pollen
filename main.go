@@ -29,6 +29,7 @@ type forecastValue struct {
 
 var cacheMutex sync.RWMutex
 var cache []forecast
+var cacheTimestamp time.Time
 
 func init() {
 	// Print date/time when logging using the default logger.
@@ -51,7 +52,8 @@ func main() {
 		}
 
 		c.HTML(http.StatusOK, "index.html", gin.H{
-			"output": output,
+			"output":         output,
+			"cacheTimestamp": cacheTimestamp.Format("15:04:05"),
 		})
 	})
 	r.GET("/api", func(c *gin.Context) {
@@ -62,6 +64,9 @@ func main() {
 			c.String(http.StatusInternalServerError, err.Error())
 			return
 		}
+
+		// Tell the use about the freshness of the cache.
+		c.Header("X-Cache-Timestamp", cacheTimestamp.Format(time.RFC3339))
 
 		// Otherwise, return what was in the cache.
 		c.JSON(http.StatusOK, output)
@@ -100,7 +105,7 @@ func refreshCacheJob() {
 			log.Println("Cache rebuild successful")
 		}
 
-		<- time.Tick(10 * time.Minute)
+		<-time.Tick(10 * time.Minute)
 	}
 }
 
@@ -171,5 +176,6 @@ func rebuildCache() error {
 
 	// Set the cache for the future.
 	cache = forecasts
+	cacheTimestamp = time.Now().UTC()
 	return nil
 }
