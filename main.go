@@ -42,6 +42,7 @@ func main() {
 
 	r := gin.Default()
 	r.LoadHTMLGlob("templates/*.html")
+	r.Static("/static", "static")
 	r.GET("/", func(c *gin.Context) {
 		output, err := fetchCache()
 

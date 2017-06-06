@@ -2,16 +2,30 @@
 <html lang="en">
 
 <head>
-  <!-- Required meta tags -->
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-
-  <!-- Bootstrap CSS -->
+  <meta name="theme-color" content="#FFFFFF" />
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta property="og:site_name" content="Pollen" />
+  <meta property="og:url" content="https://pollen.dhedegaard.dk/" />
+  <meta property="og:title" content="Pollen" />
+  <meta property="og:description" content="{{ range .output }}{{ .CityName }}: {{ .ForecastText }} - {{ end }}" />
+  <title>Pollen</title>
+  <link rel="shortcut icon" href="static/favicon.ico" />
+  <link rel="manifest" href="static/manifest.json" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
     crossorigin="anonymous">
 </head>
 
 <body>
+  <nav class="navbar sticky-top navbar-light bg-faded">
+    <div class="container">
+      <h1 class="navbar-brand text-left">
+        <img src="/static/favicon.png" width="30" height="30" class="d-inline-block align-top" alt="Pollen icon"> Pollen
+      </h1>
+    </div>
+  </nav>
   <div class="container">
     <div class="row">
       {{ range .output }}
