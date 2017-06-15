@@ -150,6 +150,7 @@ func rebuildCache() error {
 				value, innerErr = strconv.Atoi(strValue)
 				if innerErr != nil {
 					log.Printf("unable to parse pollen value for \"%s\": %v", strValue, innerErr)
+					return
 				}
 			}
 
