@@ -51,9 +51,11 @@
                 </li>
               {{ end }}
             </ul>
-            <div class="card-block">
-              <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
-            </div>
+            {{ if ne .ForecastText "" }}
+              <div class="card-block">
+                <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
+              </div>
+            {{ end }}
           </div>
         </div>
       {{ end }}
