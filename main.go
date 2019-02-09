@@ -130,7 +130,6 @@ func rebuildCache() error {
 
 		// Parse various fields.
 		cityName := strings.Title(strings.ToLower(selection.Find("div.title").First().Text()))
-		fmt.Println("*** CITYNAME: %s", cityName)
 		forecastValues := make([]forecastValue, 0, 0)
 
 		// Iterate on each pollen type.
