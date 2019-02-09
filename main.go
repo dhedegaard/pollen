@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -14,12 +15,11 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const url = "https://www.dmi.dk/vejr/sundhedsvejr/pollen/"
+const url = "https://www.astma-allergi.dk/dagenspollental"
 
 type forecast struct {
-	CityName     string          `json:"city_name"`
-	ForecastText string          `json:"forecast_text"`
-	Values       []forecastValue `json:"values"`
+	CityName string          `json:"city_name"`
+	Values   []forecastValue `json:"values"`
 }
 
 type forecastValue struct {
@@ -122,27 +122,27 @@ func rebuildCache() error {
 	forecasts := make([]forecast, 0, 0)
 
 	var outerErr error
-	doc.Find("div.tx-dmi-data-store table table").Each(func(index int, selection *goquery.Selection) {
+	doc.Find("div.astma_pollen .main div.region").Each(func(index int, selection *goquery.Selection) {
 		// Skip if any of the previous iterations encountered an error.
 		if outerErr != nil {
 			return
 		}
 
-		// Parse varies fields.
-		cityName := selection.Find("tr").First().Text()
-		forecastText := selection.Find("tr").Last().Text()
+		// Parse various fields.
+		cityName := strings.Title(strings.ToLower(selection.Find("div.title").First().Text()))
+		fmt.Println("*** CITYNAME: %s", cityName)
 		forecastValues := make([]forecastValue, 0, 0)
 
 		// Iterate on each pollen type.
 		var err error
-		selection.Find("tr").Each(func(index int, sel *goquery.Selection) {
+		selection.Find(".row_value").Each(func(index int, sel *goquery.Selection) {
 			// Skip known offenders or if we encountered an error.
-			if err != nil || sel.Find("td").Length() != 2 {
+			if err != nil || sel.Find("div").Length() != 2 {
 				return
 			}
 
 			// Try to parse the value as an integer, setting 0 in case of failure.
-			strValue := sel.Find("td").Last().Text()
+			strValue := sel.Find(".r_value").First().Text()
 			value := 0
 			if strValue != "-" {
 				// Otherwise try to parse int, returning an error if we fail.
@@ -156,7 +156,7 @@ func rebuildCache() error {
 
 			// Success, append and proceed.
 			forecastValues = append(forecastValues, forecastValue{
-				Name:  sel.Find("td").First().Text(),
+				Name:  strings.Replace(sel.Find(".r_name").First().Text(), ":", "", -1),
 				Value: value,
 			})
 		})
@@ -167,9 +167,8 @@ func rebuildCache() error {
 		}
 
 		forecasts = append(forecasts, forecast{
-			CityName:     cityName,
-			ForecastText: forecastText,
-			Values:       forecastValues,
+			CityName: cityName,
+			Values:   forecastValues,
 		})
 	})
 	if outerErr != nil {

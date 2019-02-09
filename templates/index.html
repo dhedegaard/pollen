@@ -11,7 +11,7 @@
   <meta property="og:site_name" content="Pollen" />
   <meta property="og:url" content="https://pollen.dhedegaard.dk/" />
   <meta property="og:title" content="Pollen" />
-  <meta property="og:description" content="{{ range .output }}{{ .CityName }}: {{ .ForecastText }} - {{ end }}" />
+  <meta property="og:description" content="{{ range .output }}{{ .CityName }} - {{ end }}" />
   <meta property="og:image" content="/static/favicon.png" />
   <title>Pollen</title>
   <link rel="shortcut icon" href="/static/favicon.ico" />
@@ -51,11 +51,6 @@
                 </li>
               {{ end }}
             </ul>
-            {{ if ne .ForecastText "" }}
-              <div class="card-block">
-                <div class="card-subtitle text-muted"><small>{{ .ForecastText }}</small></div>
-              </div>
-            {{ end }}
           </div>
         </div>
       {{ end }}
